@@ -1,4 +1,4 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model } = require('mongoose');
 const thoughtSchema = require('./Thought');
 
 // Schema to create Student model
@@ -16,58 +16,63 @@ const userSchema = new Schema(
       required: true,
       match: true //tf
     },
-    thoughts: {
-      _id: [thoughtSchema],
-    },
-    friends: {
-      _id: [userSchema],
-    }
+    thoughts: [{
+      type: Schema.Types.ObjectId,
+      ref: 'thought',
+     // _id: [thoughtSchema],
+    }],
+    friends: [{
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      //_id: [userSchema],
+    }],
     toJSON: {
       getters: true,
-      },
+    },
+    id: false,
   }
 );
 
-app.get('/Thought', (req, res) => {
-  Thought.aggregate(
-    [
-      {
-        _id: thought,
-      },
-    ],
-    (err,result) => {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        res.status(200).send(result);
-      }
-    }
-  );
-
+postSchema.virtual('friendCount').get(function(){
+  return this.friends.length;
 });
 
-app.get('/User', (req, res) => {
-  User.aggregate(
-    [
-      {
-        _id: user,
-      },
-    ],
-    (err,result) => {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        res.status(200).send(result);
-      }
-    }
-  );
 
-})
+// app.get('/Thought', (req, res) => {
+//   Thought.aggregate(
+//     [
+//       {
+//         _id: thought,
+//       },
+//     ],
+//     (err, result) => {
+//       if (err) {
+//         res.status(500).send(err);
+//       } else {
+//         res.status(200).send(result);
+//       }
+//     }
+//   );
 
+// });
 
+// app.get('/User', (req, res) => {
+//   User.aggregate(
+//     [
+//       {
+//         _id: user,
+//       },
+//     ],
+//     (err, result) => {
+//       if (err) {
+//         res.status(500).send(err);
+//       } else {
+//         res.status(200).send(result);
+//       }
+//     }
+//   );
 
-
-
+// })
 
 const User = model('user', userSchema);
 

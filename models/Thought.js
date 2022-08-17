@@ -1,32 +1,39 @@
 const { Schema, model } = require('mongoose');
-const assignmentSchema = require('./Assignment');
+const reactionSchema = require('./Reaction');
 
 
 const thoughtSchema = new Schema(
   {
-    first: {
+    thoughtText: {
       type: String,
       required: true,
-      max_length: 50,
+      max: 280
     },
-    last: {
+    createdAt: {
+      date: Date,
+      default: Date.now
+    },
+    username: {
       type: String,
-      required: true,
-      max_length: 50,
+      required: true
     },
-    github: {
-      type: String,
-      required: true,
-      max_length: 50,
-    },
-    assignments: [assignmentSchema],
+    reactions: [{
+      type: Schema.Types.ObjectId,
+      ref: 'reaction',
+      //reactionSchema
+    }],
   },
   {
     toJSON: {
       getters: true,
     },
+    id: false,
   }
 );
+
+postSchema.virtual('reactionCount').get(function () {
+  return this.reactions.length;
+});
 
 const Thought = model('thought', thoughtSchema);
 

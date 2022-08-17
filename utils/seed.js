@@ -1,51 +1,67 @@
-const connection = require('../config/connection');
-const { Course, Student } = require('../models');
-const { getRandomName, getRandomAssignments } = require('./data');
+const addDateSuffix = (date) => {
+  let dateStr = date.toString();
 
-connection.on('error', (err) => err);
+  // get last char of date string
+  const lastChar = dateStr.charAt(dateStr.length - 1);
 
-connection.once('open', async () => {
-  console.log('connected');
-
-  // Drop existing courses
-  await Course.deleteMany({});
-
-  // Drop existing students
-  await Student.deleteMany({});
-
-  // Create empty array to hold the students
-  const students = [];
-
-  // Loop 20 times -- add students to the students array
-  for (let i = 0; i < 20; i++) {
-    // Get some random assignment objects using a helper function that we imported from ./data
-    const assignments = getRandomAssignments(20);
-
-    const fullName = getRandomName();
-    const first = fullName.split(' ')[0];
-    const last = fullName.split(' ')[1];
-    const github = `${first}${Math.floor(Math.random() * (99 - 18 + 1) + 18)}`;
-
-    students.push({
-      first,
-      last,
-      github,
-      assignments,
-    });
+  if (lastChar === '1' && dateStr !== '11') {
+    dateStr = `${dateStr}st`;
+  } else if (lastChar === '2' && dateStr !== '12') {
+    dateStr = `${dateStr}nd`;
+  } else if (lastChar === '3' && dateStr !== '13') {
+    dateStr = `${dateStr}rd`;
+  } else {
+    dateStr = `${dateStr}th`;
   }
 
-  // Add students to the collection and await the results
-  await Student.collection.insertMany(students);
+  return dateStr;
+};
 
-  // Add courses to the collection and await the results
-  await Course.collection.insertOne({
-    courseName: 'UCLA',
-    inPerson: false,
-    students: [...students],
-  });
+// function to format a timestamp, accepts the timestamp and an `options` object as parameters
+module.exports = (
+  timestamp,
+  { monthLength = 'short', dateSuffix = true } = {}
+) => {
+  // create month object
+  const months = {
+    0: monthLength === 'short' ? 'Jan' : 'January',
+    1: monthLength === 'short' ? 'Feb' : 'February',
+    2: monthLength === 'short' ? 'Mar' : 'March',
+    3: monthLength === 'short' ? 'Apr' : 'April',
+    4: monthLength === 'short' ? 'May' : 'May',
+    5: monthLength === 'short' ? 'Jun' : 'June',
+    6: monthLength === 'short' ? 'Jul' : 'July',
+    7: monthLength === 'short' ? 'Aug' : 'August',
+    8: monthLength === 'short' ? 'Sep' : 'September',
+    9: monthLength === 'short' ? 'Oct' : 'October',
+    10: monthLength === 'short' ? 'Nov' : 'November',
+    11: monthLength === 'short' ? 'Dec' : 'December',
+  };
 
-  // Log out the seed data to indicate what should appear in the database
-  console.table(students);
-  console.info('Seeding complete! 🌱');
-  process.exit(0);
-});
+  const dateObj = new Date(timestamp);
+  const formattedMonth = months[dateObj.getMonth()];
+
+  const dayOfMonth = dateSuffix
+    ? addDateSuffix(dateObj.getDate())
+    : dateObj.getDate();
+
+  const year = dateObj.getFullYear();
+  let hour =
+    dateObj.getHours() > 12
+      ? Math.floor(dateObj.getHours() - 12)
+      : dateObj.getHours();
+
+  // if hour is 0 (12:00am), change it to 12
+  if (hour === 0) {
+    hour = 12;
+  }
+
+  const minutes = (dateObj.getMinutes() < 10 ? '0' : '') + dateObj.getMinutes();
+
+  // set `am` or `pm`
+  const periodOfDay = dateObj.getHours() >= 12 ? 'pm' : 'am';
+
+  const formattedTimeStamp = `${formattedMonth} ${dayOfMonth}, ${year} at ${hour}:${minutes} ${periodOfDay}`;
+
+  return formattedTimeStamp;
+};
