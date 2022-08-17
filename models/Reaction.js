@@ -1,12 +1,12 @@
-const { Schema, model } = require('mongoose');
-const mongoose = require('mongoose');
+const { Schema, Types } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 
-const reactionSchema = new mongoose.Schema(
+
+const reactionSchema = new Schema(
   {
     reactionId: {
       type: Schema.Types.ObjectId,
-      default: () => new Types.ObjectId()
     },
     reactionBody: {
       type: String,
@@ -18,8 +18,8 @@ const reactionSchema = new mongoose.Schema(
       required: true
     },
     createdAt: {
-      date: Date,
-      //default: Date.now
+      type: Date,
+      default: dateFormat(Date.now)
     },
     toJSON: {
       getters: false,
@@ -28,9 +28,6 @@ const reactionSchema = new mongoose.Schema(
   }
 );
 
-
-
-
 // const Reaction = mongoose.model('Reaction', reactionSchema);
 
 // const handleError = (err) => console.error(err);
@@ -38,7 +35,5 @@ const reactionSchema = new mongoose.Schema(
 // Reaction.getTimestamp(`${createdAt}`, (err) =>
 //   err ? handleError(err) : console.log('no timestamp found')
 // );
-
-
 
 module.exports = reactionSchema;
