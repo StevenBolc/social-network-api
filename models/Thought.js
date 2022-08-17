@@ -11,27 +11,23 @@ const thoughtSchema = new Schema(
     },
     createdAt: {
       date: Date,
-      default: Date.now
+      //default: Date.now
     },
     username: {
       type: String,
       required: true
     },
-    reactions: [{
-      type: Schema.Types.ObjectId,
-      ref: 'reaction',
-      //reactionSchema
-    }],
+    reactions:[reactionSchema]
   },
   {
     toJSON: {
-      getters: true,
+      //getters: true,
     },
     id: false,
   }
 );
 
-postSchema.virtual('reactionCount').get(function () {
+thoughtSchema.virtual('reactionCount').get(function () {
   return this.reactions.length;
 });
 

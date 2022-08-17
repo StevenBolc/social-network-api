@@ -27,15 +27,26 @@ const userSchema = new Schema(
       //_id: [userSchema],
     }],
     toJSON: {
-      getters: true,
+     // getters: true,
     },
     id: false,
   }
 );
 
-postSchema.virtual('friendCount').get(function(){
+userSchema.virtual('friendCount').get(function(){
   return this.friends.length;
 });
+
+
+const User = model('user', userSchema);
+
+module.exports = User;
+
+
+
+
+
+
 
 
 // app.get('/Thought', (req, res) => {
@@ -73,7 +84,3 @@ postSchema.virtual('friendCount').get(function(){
 //   );
 
 // })
-
-const User = model('user', userSchema);
-
-module.exports = User;

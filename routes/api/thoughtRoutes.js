@@ -21,5 +21,4 @@ router.route('/:thoughtId')
   .post(addThoughts)
   .delete(removeThoughts);
 
-
 module.exports = router;

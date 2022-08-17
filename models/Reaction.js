@@ -1,3 +1,4 @@
+const { Schema, model } = require('mongoose');
 const mongoose = require('mongoose');
 
 
@@ -18,10 +19,10 @@ const reactionSchema = new mongoose.Schema(
     },
     createdAt: {
       date: Date,
-      default: Date.now
+      //default: Date.now
     },
     toJSON: {
-      virtuals: true,
+      getters: false,
     },
     id: false,
   }
@@ -38,6 +39,6 @@ const reactionSchema = new mongoose.Schema(
 //   err ? handleError(err) : console.log('no timestamp found')
 // );
 
-const Reaction = model('reaction', reactionSchema);
 
-module.exports = Reaction;
+
+module.exports = reactionSchema;
