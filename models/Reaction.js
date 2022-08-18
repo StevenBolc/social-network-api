@@ -19,7 +19,8 @@ const reactionSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: dateFormat(Date.now)
+      default: Date.now,
+      get: timestamp => dateFormat(timestamp)
     },
     toJSON: {
       getters: false,
